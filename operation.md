@@ -110,11 +110,11 @@ cd /opt/bochs;/opt/bochs/bin/bochs -f /opt/bochs/bochsrc.disk
 屏幕成功展示出字符串
 
 编译loader:
-nasm -I include/ -o /opt/bin/loader.bin loader.S
+nasm -I /opt/os/include/ -o /opt/bin/loader.bin /opt/os/loader.S
 将loader写道磁盘2扇区：dd if=/opt/bin/loader.bin of=/opt/bochs/hd60M.img bs=512 count=1 seek=2 conv=notrunc
 
 编译mbr:
-nasm -I include/ -o /opt/bin/mbr.bin mbr2.s
+nasm -I /opt/os/include/ -o /opt/bin/mbr.bin /opt/os/mbr3.s
 将mbr写道磁盘0扇区：dd if=/opt/bin/mbr.bin of=/opt/bochs/hd60M.img bs=512 count=1 conv=notrunc
  
 

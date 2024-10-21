@@ -22,7 +22,7 @@ SELECTOR_VIDEO      equ (0x0003<<3) + TI_GDT + RPL0
 gdt_ptr dw GDT_LIMIT ;为指令lgdt做准备 把gdt信息加载到gdtr寄存器
         dd GDT_BASE
 
-lodermsg db '2 loader in real.'
+loadermsg db '2 loader in real.'
 
 loader_start:
 ;调用已有例程 INT 0x10 功能号13 表示打印字符串
@@ -39,7 +39,7 @@ loader_start:
 ;  2—字符串中含显示字符和显示属性。显示后，光标位置不变 
 ;  3—字符串中含显示字符和显示属性。显示后，光标位置改变 
 mov sp,LOADER_BASE_ADDR
-mov bp,lodermsg         ;ES:BP = 字符串地址
+mov bp,loadermsg         ;ES:BP = 字符串地址
 mov cx,17               ;CX = 字符串长度
 mov ax,0x1301           ;AH = 13,  AL = 01h 
 mov bx,0x001f           ;页号为0(BH = 0) 蓝底粉红字(BL = 1fh)
@@ -59,7 +59,7 @@ mov cr0, eax
 
 jmp dword SELECTOR_CODE:p_mode_start ;刷新流水线 避免16 和 32 地址混乱流水线把32位指令按照16位译码
 
-[bit 32]
+[bits 32]
 p_mode_start:
     mov ax,SELECTOR_DATA
     mov ds,ax
@@ -70,33 +70,3 @@ p_mode_start:
     mov gs,ax
     mov byte [gs:160], 'P'
     jmp $
-;
-;
-;
-
-;mov byte [gs:0x00],'2'
-;mov byte [gs:0x01],0xA4
-
-;mov byte [gs:0x02],' '
-;mov byte [gs:0x03],0xA4
-
-;mov byte [gs:0x04],'l'
-;mov byte [gs:0x05],0xA4
-
-;mov byte [gs:0x06],'o'
-;mov byte [gs:0x07],0xA4
-
-;mov byte [gs:0x08],'a'
-;mov byte [gs:0x09],0xA4
-
-;mov byte [gs:0x0a],'d'
-;mov byte [gs:0x0b],0xA4
-
-;mov byte [gs:0x0c],'e'
-;mov byte [gs:0x0d],0xA4
-
-;mov byte [gs:0x0e],'r'
-;mov byte [gs:0x0f],0xA4
-
-;jmp $
-
