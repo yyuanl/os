@@ -112,7 +112,7 @@ mov di,ards_buf     ;接受返回信息的内存地址
 
 .error_hlt:
   jmp $
-.mem_get_ok
+.mem_get_ok:
   mov [total_mem_bytes],edx
 
 
@@ -144,18 +144,81 @@ p_mode_start:
     mov esp,LOADER_STACK_TOP
     mov ax,SELECTOR_VIDEO
     mov gs,ax
-    mov byte [gs:160], 'P'
-    jmp $
+    ;mov byte [gs:160], 'P'
+    ;jmp $
 
+    ;构建PDE PTE
+    call setup_page
 
+    sgdt [gdt_ptr] ; 先把gdt 挪个地方
 
+    ;显存段段基址+0xc0000 000凑成虚拟地址，高3G
+    mov ebx,[gdt_ptr+2]
+    ;显存段是第三个段描述符。高4字节是的最高位是段基址的31-24位
+    or dword [ebx+0x18+4],0xc0000000
+    add dword [gdt_ptr + 2],0xc0000000;gdt基址变成虚拟地址高地址
+    add esp,0xc0000000;同理将栈指针页变成虚拟地址高地址 内核
+    ;把页目录地址赋值给cr3
+    mov eax,PAGE_DIR_TABLE_POS
+    mov cr3,eax
+
+    ;打开cr0的pg位 第31位
+    mov eax,cr0
+    or eax,0x80000000
+    mov cr0,eax
+
+    ;开启分页后，用gdt新的地址重新加载
+    lgdt [gdt_ptr]
+    mov byte[gs:160],'V';
+    jmp $;
 
 ; 创建页目录及页表
-
 setup_page:
-  mov ecx,4096 ；clear pde 4kb = 4096Byte
+  mov ecx,4096 ;clear pde 4kb = 4096Byte
   mov esi,0
 .clear_page_dir: ;清空pde页表目录表
   mov byte [PAGE_DIR_TABLE_POS + esi],0
   inc esi
   loop .clear_page_dir
+
+;创建PDE
+.create_pde:
+  mov eax,PAGE_DIR_TABLE_POS
+  add eax,0x1000 ;PAGE_DIR_TABLE_POS + 0x1000是0号页表的首地址。因为页目录PED占4KB
+  mov ebx,eax
+
+  ;构造完整的页目录项的值，是一个地址加属性。用户属性,所有特权级都可以访问
+  or eax, PG_US_U | PG_RW_W | PG_P
+  mov [PAGE_DIR_TABLE_POS + 0x0],eax
+  ; 3G=0xc000 000 0,高10位是1100 0000 00b=2^9 + 2^8=(2 + 1)*2^8=3*256=768
+  ; PDE的第768项的值也应该是0号页表的首地址.768*4=0xc00,第768项的地址是PAGE_DIR_TABLE_POS+768*4
+  mov [PAGE_DIR_TABLE_POS + 0xc00],eax ;构造虚拟地址0xc0000000-0xc00000000 1G属于内核
+
+  sub eax,0x1000
+  mov [PAGE_DIR_TABLE_POS + 4096],eax;最后一个页目录项指向自己pde首地址
+
+  ;创建页表项pte
+  mov ecx,256
+  mov esi,0
+  mov edx,PG_US_U | PG_RW_W | PG_P ;属性7
+.create_pte:
+  mov [ebx+esi*4],edx
+  add edx,4096 ;页大小是4kb 4096
+  inc esi
+  loop .create_pte
+
+; 创建内核其他页表的PED，虽然对应PTE还未创建
+  mov eax,PAGE_DIR_TABLE_POS
+  add eax,0x200 ;1号页表
+  or eax,PG_US_U | PG_RW_W | PG_P
+  mov ebx,PAGE_DIR_TABLE_POS
+  mov ecx,254
+  mov esi,769
+.create_kernel_pde:
+  mov [ebx+esi*4],eax
+  inc esi
+  add eax,0x1000
+  loop .create_kernel_pde
+  ret
+
+

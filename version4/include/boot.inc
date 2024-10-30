@@ -42,7 +42,7 @@ PAGE_DIR_TABLE_POS equ 0x100000 ; 超出1M的第一个字节
 ; ----页表相关属性----
 PG_P equ 1b  ; 物理内存不够，置换页到磁盘，此位0 下次访问出发缺页中断，再加载到内存
 PG_RW_R equ 00b ; read
-PG_RW_W equ 20b ; write
+PG_RW_W equ 10b ; write
 
 PG_US_S equ 000b ;不能被特权级3的任务访问，处理器只允许特权级为0、1、2的任务访问该PTE或PDE指向的内存
 PG_US_U equ 100b ;允许任何特权级的任务访问PTE或PDE指向的内存
