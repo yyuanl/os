@@ -46,3 +46,9 @@ PG_RW_W equ 10b ; write
 
 PG_US_S equ 000b ;不能被特权级3的任务访问，处理器只允许特权级为0、1、2的任务访问该PTE或PDE指向的内存
 PG_US_U equ 100b ;允许任何特权级的任务访问PTE或PDE指向的内存
+
+KERNEL_START_SECTOR equ 0x9
+KERNEL_BIN_BASE_ADDR equ 0x70000
+KERNEL_ENTRY_POINT equ 0xc0001500
+
+PT_NULL equ 0

@@ -147,6 +147,11 @@ p_mode_start:
     ;mov byte [gs:160], 'P'
     ;jmp $
 
+;--------load kernerl 2024.11.4--------------
+    mov eax,KERNEL_START_SECTOR ; kernel.bin所在的扇区号
+    mov ebx,KERNEL_BIN_BASE_ADDR ;从磁盘写入ebx的地址处
+    mov ecx,200;读入的扇区数
+    call rd_disk_m_32;------------------------------
     ;构建PDE PTE
     call setup_page
 
@@ -169,8 +174,58 @@ p_mode_start:
 
     ;开启分页后，用gdt新的地址重新加载
     lgdt [gdt_ptr]
-    mov byte[gs:160],'V';
-    jmp $;
+    jmp SELECTOR_CODE:enter_kernel ;保险起见，刷新流水线
+
+enter_kernel:
+  call kernel_init
+  mov esp,0xc009f000 ;选择较高地址作为栈底。考虑pcb块是4kb，取证得出0xc009f000
+  jmp KERNEL_ENTRY_POINT
+;==============================以下是封装的代码片段===========================
+;kernel_init将内核段拷贝到编译对应的地址
+kernel_init:
+  xor eax,eax
+  xor ebx,ebx ;程序头表地址
+  xor ecx,ecx ;程序头表表项即程序头的个数
+  xor edx,edx ;记录程序头的尺寸
+
+  mov dx, [KERNEL_BIN_BASE_ADDR + 42]
+  mov ebx,[KERNEL_BIN_BASE_ADDR + 28]
+  add ebx,KERNEL_BIN_BASE_ADDR
+  mov cx,[KERNEL_BIN_BASE_ADDR + 44]
+
+.each_segment:
+  cmp byte [ebx + 0],PT_NULL
+  je .PTNULL
+
+  ;调用函数mem_cpy(dst,src,size)
+  push dword [ebx + 16] ;p_filesz字段表示本段大小
+  mov eax,[ebx + 4] ;p_offset字段表示本段相对于起始位置偏移量
+  add eax,KERNEL_BIN_BASE_ADDR ;文件被拷贝到KERNEL_BIN_BASE_ADDR
+  push eax
+  push dword [ebx + 8] ;p_vaddr字段，表示该段应该被放到这个地址，将来让cpu执行该地址处指令
+  call mem_cpy
+.PTNULL:
+  add ebx,edx ;移动指针，指向下一个程序头处
+  loop .each_segment
+  ret
+
+; ----mem_cpy 内存拷贝---
+mem_cpy:
+  cld ;清楚内存拷贝操作方向
+  push ebp ;备份ebp
+  mov ebp,esp
+  push ecx ;rep指令使用了ecx，先备份调用前的值，避免影响外层
+  mov edi,[ebp + 8]
+  mov esi,[ebp + 12]
+  mov ecx,[ebp + 16]
+  rep movsb ;一个字一个字拷贝
+
+  ;恢复调用前状态
+  pop ecx
+  pop ebp
+  ret
+
+
 
 ; 创建页目录及页表
 setup_page:
@@ -221,4 +276,64 @@ setup_page:
   loop .create_kernel_pde
   ret
 
+;读取硬盘n个扇区.eax LBA扇区号；ebx 内存地址；ecx 读入的扇区数
+rd_disk_m_32:
+  mov esi,eax;备份eax
+  mov di,cx ;备份扇区数到di
 
+;使用硬盘控制器接口读写硬盘
+;1、设置要读取的扇区数
+  mov dx,0x1f2
+  mov al,cl
+  out dx,al  ;读取的扇区数
+
+  mov eax,esi ;恢复ax
+;2、设置LBA地址
+
+  ;LBA地址7-0位写入端口0x1f3
+  mov dx,0x1f3
+  out dx,al
+
+  ;LBA地址15-8位写入端口0x1f4
+  mov cl,8
+  shr eax,cl
+  mov dx,0x1f4
+  out dx,al
+
+  ;LAB地址23-16位写入端口0x1f5
+  shr eax,cl
+  mov dx,0x1f5
+  out dx,al
+
+  shr eax,cl
+  and al,0x0f
+  or al,0xe0
+  mov dx,0x1f6
+  out dx,al
+
+;3、向0x1f7端口写入读命令，0x20
+  mov dx,0x1f7
+  mov al,0x20
+  out dx,al
+
+;4、检测硬盘状态
+  .not_ready:
+    nop
+    in al,dx
+    and al,0x88
+    cmp al,0x08
+    jnz .not_ready
+
+    ;硬盘不忙，则准备从磁盘读数据到内存
+;5、从0x1f0端口读数据
+  mov ax,di ;di是扇区数
+  mov dx,256 ;一个字两字节，每次读2字节，一个扇区需要读512/2=256次
+  mul dx
+  mov cx,ax
+  mov dx,0x1f0
+  .go_on_read:
+    in ax,dx
+    mov [ebx],ax ;ebx 对应152行 内存地址 因为是32位模式，使用ebx。编译器会对机器码加上0x66 0x67反转
+    add ebx,2
+  loop .go_on_read
+  ret
