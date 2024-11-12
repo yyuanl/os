@@ -37,6 +37,7 @@ gcc -c -o /opt/bin/main.o /opt/os/version5/kernel/main.c && ld main.o -Ttext 0xc
   #### elf header:
   
     ![](../asset/elf_header.png)
+    
   - 遍历程序头表：
     - e_phentsize:程序头表表项的大小，在elf header后42字节处
     - e_phoff，第一个程序头表在文件中偏移量，在elf header后28字节处
@@ -48,8 +49,11 @@ gcc -c -o /opt/bin/main.o /opt/os/version5/kernel/main.c && ld main.o -Ttext 0xc
     - p_vaddr，段要被拷贝到那个地址上，将来好让cpu执行
 #### 加载内核
   - 将bin文件从磁盘拷贝到物理地址某个地方，低端内存可用内存出
+  - 
     ![](../asset/avaliable.png)
+
     取整，使用0x70000.内核不超过100kb
+
     选择0x1500作为内核映像入口地址
   - **一句话，将内核可执行文件加载到物理地址0x70000处，解析它的头，将段再拷贝到对应的地址上，loader跳转到内核入口处执行**
   - mem_cpy调用栈:
@@ -73,6 +77,7 @@ mem_cpy:
   ret
 ```
   - 内存布局：
+  - 
     ![](../asset/kernel_mem_layout.png)
   
   
