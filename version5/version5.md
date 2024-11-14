@@ -79,5 +79,9 @@ mem_cpy:
   - 内存布局：
   - 
     ![](../asset/kernel_mem_layout.png)
+
+
+  - 运行结果:
+    ![](../asset/11-14.png)
   
   
