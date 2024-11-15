@@ -1,20 +1,20 @@
 # os
 实现一个操作系统
 
-#### version0
+#### **version0**
 bios 跳转到mbr
-#### version1
+#### **version1**
 添加loader,mbr跳转到loader中执行指令
-#### verison2
+#### **verison2**
 构造gdt全局描述符表，从16位实模式到32位保护模式
 [https://github.com/yyuanl/os/blob/main/version2/version2.md](https://github.com/yyuanl/os/blob/main/version2/version2.md)
-#### version3
+#### **version3**
 使用例程检测内存大小
 [https://github.com/yyuanl/os/blob/main/version3/version3.md](https://github.com/yyuanl/os/blob/main/version3/version3.md)
-#### version4
+#### **version4**
 构造二级页表，开启分页模式，从物理地址到虚拟地址
 [https://github.com/yyuanl/os/blob/main/version4/version4.md](https://github.com/yyuanl/os/blob/main/version4/version4.md)
-#### version5
+#### **version5**
 编译c语言内核，死循环，链接成可执行elf文件，读取到内存中，解析程序段并拷贝到对应地址，跳转到入口执行
 #### 特权级
 指令放在代码中，代码段寄存器cs放段选择子，选择子低两位RPL表示代码请求资源能力的等级CPL
@@ -46,8 +46,11 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
   - 处理器固件将用户提交参数复制到0级栈
     - 用户正常提交的缓冲区参数指向用户区，则内核将要访问的段DPL是3，满足CPL<=DPL,RPL<=DPL，0<=3,3<=
     - 用户搞破坏，缓冲区段指向内核，则目标段DPL是0，不满足CPL<=DPL,RPL<=DPL，0<=0,3<=0，抛出异常
-#### version6
-实现打印字符串功能print.s，main.c调用汇编
+#### **version6**
+实现打印字符功能print.s，main.c调用汇编
 [https://github.com/yyuanl/os/blob/main/version6/version6.md](https://github.com/yyuanl/os/blob/main/version6/version6.md)
+#### **version7**
+再封装打印字符串和16进制
+[https://github.com/yyuanl/os/blob/main/version7/version6.md](https://github.com/yyuanl/os/blob/main/version7/versio7.md)
 
 
