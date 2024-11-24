@@ -51,6 +51,6 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 [https://github.com/yyuanl/os/blob/main/version6/version6.md](https://github.com/yyuanl/os/blob/main/version6/version6.md)
 #### **version7**
 再封装打印字符串和16进制
-[https://github.com/yyuanl/os/blob/main/version7/version6.md](https://github.com/yyuanl/os/blob/main/version7/versio7.md)
+[https://github.com/yyuanl/os/blob/main/version7/version7.md](https://github.com/yyuanl/os/blob/main/version7/versio7.md)
 
 
