@@ -52,5 +52,8 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 #### **version7**
 再封装打印字符串和16进制
 [https://github.com/yyuanl/os/blob/main/version7/version7.md](https://github.com/yyuanl/os/blob/main/version7/versio7.md)
+#### **version8**
+根据硬件约定的pic，idt，开启中断
+[https://github.com/yyuanl/os/blob/main/version8/version8.md](https://github.com/yyuanl/os/blob/main/version8/versio8.md)
 
 
