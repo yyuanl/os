@@ -51,22 +51,22 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 [https://github.com/yyuanl/os/blob/main/version6/version6.md](https://github.com/yyuanl/os/blob/main/version6/version6.md)
 #### **version7**
 再封装打印字符串和16进制
-[https://github.com/yyuanl/os/blob/main/version7/version7.md](https://github.com/yyuanl/os/blob/main/version7/versio7.md)
+[https://github.com/yyuanl/os/blob/main/version7/version7.md](https://github.com/yyuanl/os/blob/main/version7/version7.md)
 #### **version8**
 根据硬件约定的pic，idt，开启中断
-[https://github.com/yyuanl/os/blob/main/version8/version8.md](https://github.com/yyuanl/os/blob/main/version8/versio8.md)
+[https://github.com/yyuanl/os/blob/main/version8/version8.md](https://github.com/yyuanl/os/blob/main/version8/version8.md)
 
 #### **version9**
 优化中断处理函数，汇编c中定义的处理的函数
-[https://github.com/yyuanl/os/blob/main/version9/version9.md](https://github.com/yyuanl/os/blob/main/version9/versio9.md)
+[https://github.com/yyuanl/os/blob/main/version9/version9.md](https://github.com/yyuanl/os/blob/main/version9/version9.md)
 
 
 #### **version10**
 配置时钟中断芯片，加快中断。
-[https://github.com/yyuanl/os/blob/main/version10/version10.md](https://github.com/yyuanl/os/blob/main/version10/versio10.md)
+[https://github.com/yyuanl/os/blob/main/version10/version10.md](https://github.com/yyuanl/os/blob/main/version10/version10.md)
 
 #### **version11**
 利用中断，实现ASSERT断言，使用makefile编译链接内核可执行文件
-[https://github.com/yyuanl/os/blob/main/version11/version11.md](https://github.com/yyuanl/os/blob/main/version11/versio11.md)
+[https://github.com/yyuanl/os/blob/main/version11/version11.md](https://github.com/yyuanl/os/blob/main/version11/version11.md)
 
 
