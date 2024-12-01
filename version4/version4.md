@@ -38,6 +38,16 @@
   - 将物理地址0-1M映射到物理地址0-1M
   - 完成mbr loader内核都位于0~1M，页目录首地址是0x100000
   - 3G = 3 * 1024 MB = 3 * 1024 * 1024KB = 3 * 1024 * 1024 * 1024Byte=3 * 2 ^30 = 3*(16^7 * 2^2) = 3 * 16^7 * 4=12*16^7=0xc0000 000
+  - 需要初始化769-1023个页表：
+```
+; 创建内核其他页表的PED，虽然对应PTE还未创建
+  mov eax,PAGE_DIR_TABLE_POS
+  add eax,0x200 ;1号页表
+  or eax,PG_US_U | PG_RW_W | PG_P
+  mov ebx,PAGE_DIR_TABLE_POS
+  mov ecx,254
+  mov esi,769
+```
   
   ![](../asset/pde_pte_layout.png)
 

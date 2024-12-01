@@ -69,4 +69,6 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 利用中断，实现ASSERT断言，使用makefile编译链接内核可执行文件
 [https://github.com/yyuanl/os/blob/main/version11/version11.md](https://github.com/yyuanl/os/blob/main/version11/version11.md)
 
-
+#### **version12**
+封装字符串操作
+[https://github.com/yyuanl/os/blob/main/version12/version12.md](https://github.com/yyuanl/os/blob/main/version12/version12.md)
