@@ -76,3 +76,7 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 #### **version13**
 内存管理，使用位图分页管理内存，构建内核、用户内存池、虚拟地址池
 [https://github.com/yyuanl/os/blob/main/version13/version13.md](https://github.com/yyuanl/os/blob/main/version13/version13.md)
+
+#### **version14**
+利用内存管理系统，分配连续的多页内存
+[https://github.com/yyuanl/os/blob/main/version14/version14.md](https://github.com/yyuanl/os/blob/main/version14/version14.md)
