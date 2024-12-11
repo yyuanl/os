@@ -8,7 +8,8 @@
         "cstdint": "c",
         "string.h": "c",
         "bitmap.h": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "cstdlib": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
