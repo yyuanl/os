@@ -85,3 +85,7 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 设计线程数据结构pcb和线程栈，分配一页用来设置线程信息，启动执行一个线程
 [https://github.com/yyuanl/os/blob/main/version15/version15.md](https://github.com/yyuanl/os/blob/main/version15/version15.md)
 
+#### **version16**
+实现线程切换，使用队列调度
+[https://github.com/yyuanl/os/blob/main/version16/version16.md](https://github.com/yyuanl/os/blob/main/version16/version16.md)
+

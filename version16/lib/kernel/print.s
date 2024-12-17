@@ -3,86 +3,98 @@ RPL0  equ   0
 SELECTOR_VIDEO equ (0x0003<<3) + TI_GDT + RPL0
 
 section .data
-put_int_buffer dq 0;双字8字节
+put_int_buffer    dq    0     ; 定义8字节缓冲区用于数字到字符的转换
 
 [bits 32]
 section .text
-
+;--------------------------------------------
+;put_str 通过put_char来打印以0字符结尾的字符串
+;--------------------------------------------
 global put_str
 put_str:
+;由于本函数中只用到了ebx和ecx,只备份这两个寄存器
    push ebx
    push ecx
-   xor ecx,ecx
-   mov ebx,[esp + 12]
+   xor ecx, ecx		      ; 准备用ecx存储参数,清空
+   mov ebx, [esp + 12]	      ; 从栈中得到待打印的字符串地址 
 .goon:
-   mov cl,[ebx]
-   cmp cl,0
+   mov cl, [ebx]
+   cmp cl, 0		      ; 如果处理到了字符串尾,跳到结束处返回
    jz .str_over
-   push ecx
+   push ecx		      ; 为put_char函数传递参数
    call put_char
-   add esp,4 ;调用者回收push过的参数
-   inc ebx;一个字符占一个字节
+   add esp, 4		      ; 回收参数所占的栈空间
+   inc ebx		      ; 使ebx指向下一个字符
    jmp .goon
 .str_over:
    pop ecx
    pop ebx
    ret
 
-global put_int   ;16进制打印 比如传入0x00123打印123
+
+;--------------------   将小端字节序的数字变成对应的ascii后，倒置   -----------------------
+;输入：栈中参数为待打印的数字
+;输出：在屏幕上打印16进制数字,并不会打印前缀0x,如打印10进制15时，只会直接打印f，不会是0xf
+;------------------------------------------------------------------------------------------
+global put_int
 put_int:
    pushad
-   mov ebp,esp
-   mov eax,[ebp+36];8个寄存器和一个返回值。参数地址
-   mov edx,eax
-   mov edi,7   ;buffer指针
-   mov ecx,8   ;循环次数
-   mov ebx,put_int_buffer
+   mov ebp, esp
+   mov eax, [ebp+4*9]		       ; call的返回地址占4字节+pushad的8个4字节
+   mov edx, eax
+   mov edi, 7                          ; 指定在put_int_buffer中初始的偏移量
+   mov ecx, 8			       ; 32位数字中,16进制数字的位数是8个
+   mov ebx, put_int_buffer
 
-.16based_4bits:
-   and edx,0x0000000F
-   cmp edx,9
-   jg .is_A2F
-   add edx,'0'   ;和字符'0' add操作后 保留低4位有效
+;将32位数字按照16进制的形式从低位到高位逐个处理,共处理8个16进制数字
+.16based_4bits:			       ; 每4位二进制是16进制数字的1位,遍历每一位16进制数字
+   and edx, 0x0000000F		       ; 解析16进制数字的每一位。and与操作后,edx只有低4位有效
+   cmp edx, 9			       ; 数字0～9和a~f需要分别处理成对应的字符
+   jg .is_A2F 
+   add edx, '0'			       ; ascii码是8位大小。add求和操作后,edx低8位有效。
    jmp .store
 .is_A2F:
-   sub edx,10
-   add edx,'A'
+   sub edx, 10			       ; A~F 减去10 所得到的差,再加上字符A的ascii码,便是A~F对应的ascii码
+   add edx, 'A'
 
+;将每一位数字转换成对应的字符后,按照类似“大端”的顺序存储到缓冲区put_int_buffer
+;高位字符放在低地址,低位字符要放在高地址,这样和大端字节序类似,只不过咱们这里是字符序.
 .store:
-   mov [ebx + edi],dl;将转后的ascii码值存到缓冲buffer中
+; 此时dl中应该是数字对应的字符的ascii码
+   mov [ebx+edi], dl		       
    dec edi
-   shr eax,4 ;下一个4位
-   mov edx,eax
+   shr eax, 4
+   mov edx, eax 
    loop .16based_4bits
 
+;现在put_int_buffer中已全是字符,打印之前,
+;把高位连续的字符去掉,比如把字符000123变成123
 .ready_to_print:
-   inc edi ;初始化新变量 循环次数 和 buffer指针变量
-.skip_prefix_0:
-   cmp edi,8
-   je .full0
-.go_on_skip:
-   mov cl,[put_int_buffer + edi]
+   inc edi			       ; 此时edi退减为-1(0xffffffff),加1使其为0
+.skip_prefix_0:  
+   cmp edi,8			       ; 若已经比较第9个字符了，表示待打印的字符串为全0 
+   je .full0 
+;找出连续的0字符, edi做为非0的最高位字符的偏移
+.go_on_skip:   
+   mov cl, [put_int_buffer+edi]
    inc edi
-   cmp cl,'0'
-   je .skip_prefix_0
-   dec edi
+   cmp cl, '0' 
+   je .skip_prefix_0		       ; 继续判断下一位字符是否为字符0(不是数字0)
+   dec edi			       ;edi在上面的inc操作中指向了下一个字符,若当前字符不为'0',要恢复edi指向当前字符		       
    jmp .put_each_num
 
 .full0:
-   mov cl,'0'
+   mov cl,'0'			       ; 输入的数字为全0时，则只打印0
 .put_each_num:
-   push ecx ;cl中是要打印的字符
+   push ecx			       ; 此时cl中为可打印的字符
    call put_char
-   add esp,4
-   inc edi
-   mov cl,[put_int_buffer + edi]
+   add esp, 4
+   inc edi			       ; 使edi指向下一个字符
+   mov cl, [put_int_buffer+edi]	       ; 获取下一个字符到cl寄存器
    cmp edi,8
    jl .put_each_num
    popad
    ret
-
-
-
 
 ;------------------------   put_char   -----------------------------
 ;功能描述:把栈中的1个字符写入光标所在处

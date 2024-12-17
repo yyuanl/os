@@ -11,6 +11,7 @@
 #define READ_WRITE_LATCH 3
 #define PIT_CONTROL_PORT 0x43
 
+
 /*把操作的计数器counter_no,读写锁属性rwl,计数器模式
 counter_mode 写入模式控制器寄存器并赋予初始值counter_value*/
 static void frequency_set(uint8_t counter_port,
@@ -27,6 +28,8 @@ static void frequency_set(uint8_t counter_port,
     /*再写入counter_value的高8位*/
     outb(counter_port,(uint8_t)counter_value >> 8);
 }
+
+
 
 /*初始化PIT 8253*/
 void timer_init(){

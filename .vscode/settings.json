@@ -9,7 +9,8 @@
         "string.h": "c",
         "bitmap.h": "c",
         "memory.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "thread.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

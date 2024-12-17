@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "string.h"
 #include "print.h"
+#include "interrupt.h"
 
 #define PG_SIZE 4096
 
