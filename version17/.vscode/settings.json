@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "sync.h": "c",
-        "interrupt.h": "c",
-        "list.h": "c"
-    }
-}
