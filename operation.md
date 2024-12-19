@@ -124,6 +124,5 @@ nasm -I /opt/os/include/ -o /opt/bin/mbr.bin /opt/os/mbr3.s
 - 删除.vscode文件，本地保留
 ```
 git rm -r --cached .vscode/
-git rm -r --cached .vscode/
 git push
 ```
