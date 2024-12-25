@@ -1,5 +1,6 @@
 # os
 实现一个操作系统，每个版本可以独立编译运行。
+version20(包括)之后的版本用one_key_to_make_and_run_os.sh脚本一键编译安装启动os。之前版本用install_os.sh脚本启动
 
 #### **version0**
 bios 跳转到mbr
