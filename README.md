@@ -108,6 +108,6 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 
 #### **version21**
 实现getpid系统调用
-[https://github.com/yyuanl/os/blob/main/version20/version20.md](https://github.com/yyuanl/os/blob/main/version20/version20.md)
+[https://github.com/yyuanl/os/blob/main/version21/version21.md](https://github.com/yyuanl/os/blob/main/version21/version21.md)
 
 
