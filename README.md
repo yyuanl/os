@@ -97,3 +97,12 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 实现键盘驱动
 [https://github.com/yyuanl/os/blob/main/version18/version18.md](https://github.com/yyuanl/os/blob/main/version18/version18.md)
 
+#### **version19**
+实现环形缓冲区，获取用户完整输入
+[https://github.com/yyuanl/os/blob/main/version19/version19.md](https://github.com/yyuanl/os/blob/main/version19/version19.md)
+
+#### **version20**
+实现用户进程，构造进程独立页表、虚拟地址池，构造tss描述符来切换任务，构造3特权级
+[https://github.com/yyuanl/os/blob/main/version20/version20.md](https://github.com/yyuanl/os/blob/main/version20/version20.md)
+
+

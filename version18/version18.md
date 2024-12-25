@@ -11,4 +11,4 @@
 CapsLock、Shift、Ctrl检测到是断码，那么转化成通码统一判断
 
 实现效果，可以输入
-![alt text](12-19-2.png)
+![](../asset/12-19-2.png)
