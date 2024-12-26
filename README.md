@@ -111,3 +111,6 @@ call 和jmp 指令后接调用门选择子为参数，以调用函数例程的�
 [https://github.com/yyuanl/os/blob/main/version21/version21.md](https://github.com/yyuanl/os/blob/main/version21/version21.md)
 
 
+#### **version22**
+实现printf函数，实现内存管理malloc free系统调用
+[https://github.com/yyuanl/os/blob/main/version22/version22.md](https://github.com/yyuanl/os/blob/main/version22/version22.md)
